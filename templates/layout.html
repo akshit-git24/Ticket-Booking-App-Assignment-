@@ -31,14 +31,17 @@
                 <ul class="navbar-nav ms-auto">
                     {%if not user.is_authenticated%}
                     <li class="nav-item"><a class="nav-link" href="{% url 'homepage' %}">🏠 Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">✈️ Browse Trips</a></li>
+                    <li class="nav-item"><a class="nav-link" href="">✈️ Browse Trips</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'register_user' %}">📝 Join Us</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">🔑 Sign In</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">🔑 Sign In</a></li>
                     {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'homepage' %}">🏠 Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">✈️ Browse Trips</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">📊 Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="#">🎫 My Bookings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="">✈️ Browse Trips</a></li>
+                    <li class="nav-item"><a class="nav-link" href="">📊 Dashboard</a></li>
+                    <li class="nav-item"><a class="nav-link" href="">🎫 My Bookings</a></li>
+                    <li><a class="dropdown-item" href="{% url 'logout' %}">👋 Sign Out</a></li>
+                        </ul>
+                    </li>
                     {%endif%}
                 </ul>
             </div>

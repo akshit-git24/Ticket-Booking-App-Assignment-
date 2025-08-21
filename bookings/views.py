@@ -17,3 +17,23 @@ def register_user(request):
     else:
         form = UserCreationForm()
     return render(request, 'Registeration_Form.html', {"form": form})
+
+def login_view(request):
+    if request.method == "POST":
+        form = AuthenticationForm(data=request.POST)
+        if form.is_valid():
+            user = form.get_user()
+            login(request, user)
+            messages.success(request, f'Welcome back, {user.get_full_name() or user.username}! 👋')
+            return redirect('homepage')
+        else:
+            messages.error(request, 'Invalid username or password. Please try again.')
+    else:
+        form = AuthenticationForm()    
+    return render(request, 'LoginForm.html', {"form": form})  
+
+
+def logout_view(request):
+    messages.success(request, 'You have been logged out successfully. See you soon! 👋')
+    logout(request)
+    return redirect('homepage')
