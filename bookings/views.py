@@ -2,11 +2,13 @@ from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from .models import TravelOption,Booking
+from .models import TravelOption,Booking,UserProfile
 from datetime import datetime, date
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
+from .forms import UserUpdateForm,UserProfileUpdateForm
 # Create your views here.
+
 def homepage(request):
     return render(request, 'homepage.html')
 
@@ -93,7 +95,7 @@ def book_travel(request, travel_id):
 
         travel_option.save()
         messages.success(request, f'🎉 Booking confirmed! Your booking ID is #{new_booking.booking_id}. Have a great trip!')
-        return redirect('homepage')
+        return redirect('my_bookings')
     
     context = {'travel_option': travel_option,'max_seats': min(travel_option.available_seats, 10)}
 
@@ -128,7 +130,6 @@ def cancel_booking(request, booking_id):
 @login_required
 def delete_booking(request, booking_id):
     booking = get_object_or_404(Booking, booking_id=booking_id, user=request.user)
-    
     if booking.status != 'cancelled':
         messages.error(request, 'Only cancelled bookings can be deleted!')
         return redirect('my_bookings')
@@ -139,3 +140,80 @@ def delete_booking(request, booking_id):
         return redirect('my_bookings')
     
     return render(request, 'delete_booking.html', {'booking': booking})
+
+@login_required
+def dashboard(request):
+    try:
+        profile = request.user.profile
+    except UserProfile.DoesNotExist:
+        profile = None
+    
+    recent_bookings = Booking.objects.filter(user=request.user)[:5]
+    total_bookings = Booking.objects.filter(user=request.user).count()
+    confirmed_bookings = Booking.objects.filter(user=request.user, status='confirmed').count()
+    cancelled_bookings = Booking.objects.filter(user=request.user, status='cancelled').count()
+    current_bookings = Booking.objects.filter(user=request.user,status='confirmed',travel_option__departure_date__gte=date.today())[:3] 
+    
+    context = {'profile': profile,'recent_bookings': recent_bookings,'total_bookings': total_bookings,
+               'confirmed_bookings': confirmed_bookings,'cancelled_bookings': cancelled_bookings,'current_bookings': current_bookings,}
+    
+    return render(request, 'dashboard.html', context)
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    profile,created = UserProfile.objects.get_or_create(user=user)
+
+    if request.method == 'POST':
+        user_form = UserUpdateForm(request.POST, instance=user)
+        profile_form = UserProfileUpdateForm(request.POST, request.FILES, instance=profile)
+
+        if user_form.is_valid() and profile_form.is_valid():
+            user_form.save()
+            profile_form.save()
+            messages.success(request, "Profile updated successfully!")
+            return redirect('dashboard')
+    else:
+        user_form = UserUpdateForm(instance=user)
+        profile_form = UserProfileUpdateForm(instance=profile)
+
+    return render(request, 'edit_profile.html',{'user_form': user_form,'profile_form': profile_form})
+
+@login_required
+def booking_history(request):
+    bookings = Booking.objects.filter(user=request.user)
+    
+    status_filter = request.GET.get('status')
+    if status_filter:
+        bookings = bookings.filter(status=status_filter)
+    
+    travel_type = request.GET.get('travel_type')
+    if travel_type:
+        bookings = bookings.filter(travel_option__type=travel_type)
+    
+    date_filter = request.GET.get('date_filter')
+    if date_filter == 'upcoming':
+        bookings = bookings.filter(travel_option__departure_date__gte=date.today())
+    elif date_filter == 'past':
+        bookings = bookings.filter(travel_option__departure_date__lt=date.today())
+    
+    context = {'bookings': bookings,'status_filter': status_filter,'travel_type': travel_type,'date_filter': date_filter,'today': date.today()}
+    return render(request, 'booking_history.html', context)
+
+@login_required
+def create_profile(request):
+    if hasattr(request.user, 'profile'):
+        return redirect('dashboard')
+    
+    if request.method == 'POST':
+        form = UserProfileUpdateForm(request.POST)
+        if form.is_valid():
+            profile = form.save(commit=False)
+            profile.user = request.user
+            profile.save()
+            messages.success(request, 'Profile created successfully!')
+            return redirect('Homepage')
+    else:
+        form = UserProfileUpdateForm()
+    return render(request, 'create_profile.html', {'form': form})

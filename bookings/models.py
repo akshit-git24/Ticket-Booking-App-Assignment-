@@ -49,3 +49,31 @@ class Booking(models.Model):
     
     class Meta:
         ordering = ['-booking_date']
+
+
+class UserProfile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', verbose_name="User Account")
+   
+    phone_number = models.CharField(max_length=15, blank=True, verbose_name="Phone Number", help_text="Your contact number for booking updates")
+    date_of_birth = models.DateField(null=True, blank=True, verbose_name="Date of Birth", help_text="When were you born?")
+    address = models.TextField(blank=True, verbose_name="Home Address", help_text="Your complete address")
+    city = models.CharField(max_length=100, blank=True, verbose_name="City", help_text="Which city do you live in?")
+    state = models.CharField(max_length=100, blank=True, verbose_name="State/Province", help_text="Your state or province")
+    country = models.CharField(max_length=100, blank=True, default="India", verbose_name="Country", help_text="Which country are you from?")
+    postal_code = models.CharField(max_length=10, blank=True, verbose_name="Postal Code", help_text="Your area postal code")
+    emergency_contact_name = models.CharField(max_length=100, blank=True, verbose_name="Emergency Contact Name", help_text="Someone to contact in case of emergency")
+    emergency_contact_phone = models.CharField(max_length=15, blank=True, verbose_name="Emergency Contact Phone", help_text="Emergency contact's phone number")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Profile Created")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Last Updated")
+    
+    def __str__(self):
+        return f"{self.get_full_name()}'s Travel Profile"
+    
+    def get_full_name(self):
+        full_name = f"{self.user.first_name} {self.user.last_name}".strip()
+        return full_name if full_name else self.user.username
+    
+    def is_complete(self):
+        """Check if user has provided essential profile information"""
+        return bool(self.phone_number and self.address and self.city)
+    

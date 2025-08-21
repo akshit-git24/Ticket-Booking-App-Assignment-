@@ -1,5 +1,5 @@
 {% extends "layout.html" %}
-{%block title%}Travel Haven{%endblock title%}
+{%block title%}Travel App{%endblock title%}
     {%block style%}
         body { font-family: Arial, sans-serif; background: #f8f9fa; }
         .header { background: #c31acfff; padding: 10px 0; }
@@ -21,7 +21,7 @@
             <div>
                 <h1>Your Travelling Partner</h1>
                 <p>Find your desired location and travel 🛫✈️</p>
-                <a href="#search" class="btn btn-primary">🔍 Find Your Perfect Trip</a>
+                <a href="{%url 'travel_options'%}" class="btn btn-primary">🔍 Find Your Perfect Trip</a>
             </div>
         </div>
     </section>
@@ -40,8 +40,8 @@
         <div class="text-center mt-4">
             <h4>Welcome back, {{ user.username }}!</h4>
             <div class="mt-3">
-                <a href="#" class="btn btn-primary me-2">📊 My Dashboard</a>
-                <a href="#" class="btn btn-outline-primary">✈️ Explore Trips</a>
+                <a href="{%url 'dashboard'%}" class="btn btn-primary me-2">📊 My Dashboard</a>
+                <a href="{% url 'travel_options' %}" class="btn btn-outline-primary">✈️ Explore Trips</a>
             </div>
         </div>
         {% endif %}

@@ -1,0 +1,140 @@
+{% extends 'layout.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block style %}
+.dashboard-card { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
+.profile-header { background: linear-gradient(135deg, #003087, #0056b3); color: white; border-radius: 10px 10px 0 0; }
+.stats-card { background: linear-gradient(135deg, #28a745, #20c997); color: white; border-radius: 10px; text-align: center; padding: 20px; }
+.booking-card { background: #f8f9fa; border-radius: 8px; padding: 15px; margin-bottom: 15px; border-left: 4px solid #003087; }
+.profile-incomplete { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin-bottom: 20px; }
+.quick-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h2 class="mb-4">Welcome, {{ user.first_name|default:user.username }}!</h2>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="dashboard-card">
+                {% if profile %}
+                    <div class="profile-header p-4 text-center">
+                        <div class="mb-3">
+                            <img src="{{ profile.get_profile_picture_url }}" alt="Profile Picture" 
+                                 style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid white;">
+                        </div>
+                        <h4>{{ profile.get_full_name }}</h4>
+                        <p class="mb-0">@{{ user.username }}</p>
+                    </div>
+                    <div class="p-4">
+                        <div class="mb-3">
+                            <strong>Email:</strong> {{ user.email|default:"Not provided" }}<br>
+                            <strong>Phone:</strong> {{ profile.phone_number|default:"Not provided" }}<br>
+                            <strong>City:</strong> {{ profile.city|default:"Not provided" }}
+                        </div>
+                        
+                        {% if not profile.is_complete %}
+                            <div class="alert alert-warning alert-sm">
+                                <small>Complete your profile for better experience</small>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="quick-actions">
+                            <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-sm">✏️ Edit Profile</a>
+                            {% if profile.profile_picture %}
+                                <a href="{% url 'remove_profile_picture' %}" class="btn btn-outline-danger btn-sm" 
+                                   onclick="return confirm('Are you sure you want to remove your profile picture?')">🗑️ Remove Photo</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% else %}
+                    <div class="profile-incomplete">
+                        <h5>Complete Your Profile</h5>
+                        <p class="mb-3">Add your details for a better booking experience.</p>
+                        <a href="{% url 'create_profile' %}" class="btn btn-primary">Create Profile</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <div class="stats-card">
+                        <h3>{{ total_bookings }}</h3>
+                        <p class="mb-0">Total Bookings</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card" style="background: linear-gradient(135deg, #28a745, #20c997);">
+                        <h3>{{ confirmed_bookings }}</h3>
+                        <p class="mb-0">Confirmed</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="stats-card" style="background: linear-gradient(135deg, #dc3545, #e74c3c);">
+                        <h3>{{ cancelled_bookings }}</h3>
+                        <p class="mb-0">Cancelled</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-card p-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Upcoming Trips</h5>
+                    <a href="{% url 'my_bookings' %}" class="btn btn-outline-primary btn-sm">View All</a>
+                </div>
+                
+                {% if current_bookings %}
+                    {% for booking in current_bookings %}
+                        <div class="booking-card">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <h6 class="mb-1">{{ booking.travel_option.type|title }} - Booking #{{ booking.booking_id }}</h6>
+                                    <p class="mb-1"><strong>{{ booking.travel_option.source }} → {{ booking.travel_option.destination }}</strong></p>
+                                    <small class="text-muted">{{ booking.travel_option.departure_date }} at {{ booking.travel_option.departure_time }}</small>
+                                </div>
+                                <div class="text-end">
+                                    <span class="badge bg-success">{{ booking.status|title }}</span><br>
+                                    <small>{{ booking.number_of_seats }} seat{{ booking.number_of_seats|pluralize }}</small>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="text-center py-4">
+                        <p class="text-muted">No upcoming trips</p>
+                        <a href="{% url 'travel_options' %}" class="btn btn-primary">Book Your Next Trip</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="dashboard-card p-4">
+                <h5 class="mb-3">Quick Actions</h5>
+                <div class="quick-actions">
+                    <a href="{% url 'travel_options' %}" class="btn btn-primary">Book New Trip</a>
+                    <a href="{% url 'my_bookings' %}" class="btn btn-outline-primary">View All Bookings</a>
+                    <a href="{% url 'booking_history' %}" class="btn btn-outline-primary">Filter search Ticket History</a>
+                    {% if not profile %}
+                        <a href="{% url 'create_profile' %}" class="btn btn-warning">Complete Profile</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
