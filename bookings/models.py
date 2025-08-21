@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
+import os
+
 class TravelOption(models.Model):
     TRAVEL_TYPES = [('flight', 'Flight ✈️'),('train', 'Train 🚆'),('bus', 'Bus 🚌')]
     STATUS_CHOICES = [('available', 'Available ✅'),('full', 'Fully Booked 🔴'),('cancelled', 'Cancelled ❌')]
@@ -53,7 +55,7 @@ class Booking(models.Model):
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile', verbose_name="User Account")
-   
+    profile_picture = models.ImageField(upload_to='profile_pictures/', blank=True, null=True, verbose_name="Profile Picture",help_text="Upload your profile picture")
     phone_number = models.CharField(max_length=15, blank=True, verbose_name="Phone Number", help_text="Your contact number for booking updates")
     date_of_birth = models.DateField(null=True, blank=True, verbose_name="Date of Birth", help_text="When were you born?")
     address = models.TextField(blank=True, verbose_name="Home Address", help_text="Your complete address")
@@ -74,6 +76,11 @@ class UserProfile(models.Model):
         return full_name if full_name else self.user.username
     
     def is_complete(self):
-        """Check if user has provided essential profile information"""
         return bool(self.phone_number and self.address and self.city)
+    
+    def delete(self, *args, **kwargs):
+        if self.profile_picture:
+            if os.path.isfile(self.profile_picture.path):
+                os.remove(self.profile_picture.path)
+        super().delete(*args, **kwargs)
     

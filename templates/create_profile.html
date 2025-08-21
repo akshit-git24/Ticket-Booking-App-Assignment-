@@ -19,7 +19,7 @@
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <!-- Profile Picture -->
+                    
                     <div class="form-section">
                         <h5 class="section-title">Profile Picture</h5>
                         <div class="text-center mb-3">
@@ -35,7 +35,7 @@
                         </div>
                     </div>
                     
-                    <!-- Personal Information -->
+                
                     <div class="form-section">
                         <h5 class="section-title">Personal Information</h5>
                         <div class="row">
@@ -53,7 +53,7 @@
                         </div>
                     </div>
 
-                    <!-- Address Information -->
+                    
                     <div class="form-section">
                         <h5 class="section-title">Address Information</h5>
                         <div class="mb-3">
@@ -82,7 +82,7 @@
                         </div>
                     </div>
 
-                    <!-- Emergency Contact -->
+                    
                     <div class="form-section">
                         <h5 class="section-title">Emergency Contact (Optional)</h5>
                         <div class="row">
@@ -108,7 +108,6 @@
 </div>
 
 <script>
-// Preview profile picture when selected
 document.getElementById('{{ form.profile_picture.id_for_label }}').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {

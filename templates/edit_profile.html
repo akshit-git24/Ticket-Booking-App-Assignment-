@@ -27,23 +27,27 @@
                 <form method="POST" enctype="multipart/form-data">
                     {% csrf_token %}
                     
-                    <!-- Profile Picture -->
+                   
                     <div class="form-section">
                         <h5 class="section-title">Profile Picture</h5>
                         <div class="text-center mb-3">
                             <div class="profile-picture-preview mb-3">
-                                <img id="profile-preview" src="{{ profile_form.instance.get_profile_picture_url }}" alt="Current Profile Picture" 
+                                 {%if profile.profile_picture%}
+                                <img id="profile-preview" src="{{ profile.profile_picture.url }}" alt="Current Profile Picture" 
                                      style="width: 120px; height: 120px; border-radius: 50%; object-fit: cover; border: 3px solid #003087;">
+                                  {%endif%}
                             </div>
                             <div class="mb-3">
-                                <label for="{{ profile_form.profile_picture.id_for_label }}" class="form-label">📸 Change Profile Picture</label>
+
                                 {{ profile_form.profile_picture }}
-                                
+                                <small class="form-text text-muted">Upload a new photo to replace your current one</small>
+
+                               
                             </div>
                         </div>
                     </div>
                     
-                    <!-- Basic User Information -->
+                    
                     <div class="form-section">
                         <h5 class="section-title">Basic Information</h5>
                         <div class="row">

@@ -178,7 +178,7 @@ def edit_profile(request):
         user_form = UserUpdateForm(instance=user)
         profile_form = UserProfileUpdateForm(instance=profile)
 
-    return render(request, 'edit_profile.html',{'user_form': user_form,'profile_form': profile_form})
+    return render(request, 'edit_profile.html',{'user_form': user_form,'profile_form': profile_form,'profile':profile})
 
 @login_required
 def booking_history(request):
@@ -207,7 +207,7 @@ def create_profile(request):
         return redirect('dashboard')
     
     if request.method == 'POST':
-        form = UserProfileUpdateForm(request.POST)
+        form = UserProfileUpdateForm(request.POST, request.FILES)
         if form.is_valid():
             profile = form.save(commit=False)
             profile.user = request.user
@@ -217,3 +217,5 @@ def create_profile(request):
     else:
         form = UserProfileUpdateForm()
     return render(request, 'create_profile.html', {'form': form})
+
+

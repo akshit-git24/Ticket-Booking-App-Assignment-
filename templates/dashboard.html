@@ -30,8 +30,12 @@
                 {% if profile %}
                     <div class="profile-header p-4 text-center">
                         <div class="mb-3">
-                            <img src="{{ profile.get_profile_picture_url }}" alt="Profile Picture" 
+                            {%if profile.profile_picture%}
+                            <img src="{{ profile.profile_picture.url }}" alt="Profile Picture" 
                                  style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid white;">
+                            {%else%}
+                            <p class="text-muted">No profile picture uploaded yet.</p>
+                            {%endif%}
                         </div>
                         <h4>{{ profile.get_full_name }}</h4>
                         <p class="mb-0">@{{ user.username }}</p>
@@ -51,17 +55,14 @@
                         
                         <div class="quick-actions">
                             <a href="{% url 'edit_profile' %}" class="btn btn-primary btn-sm">✏️ Edit Profile</a>
-                            {% if profile.profile_picture %}
-                                <a href="{% url 'remove_profile_picture' %}" class="btn btn-outline-danger btn-sm" 
-                                   onclick="return confirm('Are you sure you want to remove your profile picture?')">🗑️ Remove Photo</a>
-                            {% endif %}
+                            
                         </div>
                     </div>
                 {% else %}
                     <div class="profile-incomplete">
                         <h5>Complete Your Profile</h5>
                         <p class="mb-3">Add your details for a better booking experience.</p>
-                        <a href="{% url 'create_profile' %}" class="btn btn-primary">Create Profile</a>
+                        <a href="{% url 'edit_profile' %}" class="btn btn-primary">Create Profile</a>
                     </div>
                 {% endif %}
             </div>
@@ -130,7 +131,7 @@
                     <a href="{% url 'my_bookings' %}" class="btn btn-outline-primary">View All Bookings</a>
                     <a href="{% url 'booking_history' %}" class="btn btn-outline-primary">Filter search Ticket History</a>
                     {% if not profile %}
-                        <a href="{% url 'create_profile' %}" class="btn btn-warning">Complete Profile</a>
+                        <a href="{% url 'edit_profile' %}" class="btn btn-warning">Complete Profile</a>
                     {% endif %}
                 </div>
             </div>
