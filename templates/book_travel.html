@@ -1,0 +1,85 @@
+{% extends 'layout.html' %}
+
+{% block title %}Book Travel{% endblock %}
+
+{% block style %}
+.booking-card { background: white; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.travel-info { background: #f8f9fa; border-radius: 8px; padding: 20px; margin-bottom: 20px; }
+.price-calculation { background: #e9ecef; border-radius: 8px; padding: 15px; }
+{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="booking-card p-4">
+                <h3 class="mb-4">Book Your Travel</h3>
+                
+                <!-- Travel Information -->
+                <div class="travel-info">
+                    <h5>{{ travel_option.type|title }} Details</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Route:</strong> {{ travel_option.source }} → {{ travel_option.destination }}</p>
+                            <p><strong>Departure:</strong> {{ travel_option.departure_date }} at {{ travel_option.departure_time }}</p>
+                            <p><strong>Arrival:</strong> {{ travel_option.arrival_date }} at {{ travel_option.arrival_time }}</p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Price per seat:</strong> ₹{{ travel_option.price }}</p>
+                            <p><strong>Available seats:</strong> {{ travel_option.available_seats }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Booking Form -->
+                <form method="POST" id="bookingForm">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <label for="seats" class="form-label">Number of Seats</label>
+                        <select name="seats" id="seats" class="form-select" required onchange="calculateTotal()">
+                            {% for i in "123456789"|make_list %}
+                                {% if forloop.counter <= max_seats %}
+                                    <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Price Calculation -->
+                    <div class="price-calculation mb-4">
+                        <div class="d-flex justify-content-between">
+                            <span>Price per seat:</span>
+                            <span>₹{{ travel_option.price }}</span>
+                        </div>
+                        <div class="d-flex justify-content-between">
+                            <span>Number of seats:</span>
+                            <span id="selectedSeats">1</span>
+                        </div>
+                        <hr>
+                        <div class="d-flex justify-content-between">
+                            <strong>Total Amount:</strong>
+                            <strong id="totalPrice">₹{{ travel_option.price }}</strong>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Confirm Booking</button>
+                        <a href="{% url 'travel_options' %}" class="btn btn-outline-secondary">Back to Options</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function calculateTotal() {
+    const seats = document.getElementById('seats').value;
+    const pricePerSeat = {{ travel_option.price }};
+    const total = seats * pricePerSeat;
+    
+    document.getElementById('selectedSeats').textContent = seats;
+    document.getElementById('totalPrice').textContent = '₹' + total;
+}
+</script>
+{% endblock %}

@@ -31,7 +31,7 @@
                 <ul class="navbar-nav ms-auto">
                     {%if not user.is_authenticated%}
                     <li class="nav-item"><a class="nav-link" href="{% url 'homepage' %}">🏠 Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="">✈️ Browse Trips</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'travel_options' %}">✈️ Browse Trips</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'register_user' %}">📝 Join Us</a></li>
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">🔑 Sign In</a></li>
                     {% else %}
