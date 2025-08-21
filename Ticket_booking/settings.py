@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bookings'
 ]
 
 MIDDLEWARE = [
@@ -57,7 +58,7 @@ ROOT_URLCONF = 'Ticket_booking.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -77,10 +78,17 @@ WSGI_APPLICATION = 'Ticket_booking.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'ticket_booking',
+        'USER': 'root', # Here is my username to access Mysql Database
+        'PASSWORD': 'Root',  #And here is the password to make changes to the DB
+        'HOST': '127.0.0.1',   #This is the localhost of my system
+        'PORT': '3306',    # this the port where the db is listen and served
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_ALL_TABLES'",
+            'charset': 'utf8mb4'}
+                }
+            }
 
 
 # Password validation
