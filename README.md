@@ -56,7 +56,7 @@ The app allows **authenticated users** to browse travel options (Flights, Trains
 
 ### 1. Clone
 ```bash
-git clone https://github.com/<your-username>/travel-booking-app.git
+git clone https://github.com/akshit-git24/Ticket-Booking-App-Assignment-.git
 cd travel-booking-app
 ```
 2. Setup Virtual Environment & Install Dependencies
