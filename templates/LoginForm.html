@@ -1,7 +1,15 @@
 {% extends "layout.html" %}
+{%load static %}
 {% block title %}Login Page{% endblock %}
 
 {% block style %}
+body {
+        background-image: url("{% static 'Login.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
 .login-card { 
     background: white; 
     border-radius: 10px; 

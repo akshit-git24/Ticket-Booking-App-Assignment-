@@ -63,7 +63,7 @@ def travel_options(request):
             available_options = TravelOption.objects.none()
             messages.error(request, '❌ Please enter a valid date format')
     else:
-        available_options = TravelOption.objects.none()
+        available_options = TravelOption.objects.filter(status='available').order_by('departure_date', 'departure_time')[:10]
         show_results = False
         is_filtered = False
         

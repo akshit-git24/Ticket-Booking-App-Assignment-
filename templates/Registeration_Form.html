@@ -1,7 +1,15 @@
 {% extends "layout.html" %}
+{%load static %}
 {% block title %}Registration Form{% endblock %}
 
 {% block style %}
+body {
+        background-image: url("{% static 'Register.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        min-height: 100vh;
+    }
     .form-container {
         background: white;
         padding: 35px;
