@@ -58,27 +58,20 @@ The app allows **authenticated users** to browse travel options (Flights, Trains
 ```bash
 git clone https://github.com/<your-username>/travel-booking-app.git
 cd travel-booking-app
+```
 2. Setup Virtual Environment & Install Dependencies
-bash
-Copy
-Edit
+```bash
 python -m venv venv
 # Windows
 venv\Scripts\activate
 # macOS/Linux
 source venv/bin/activate
-
 pip install -r requirements.txt
+```
 3. Database Setup
-SQLite (default)
-No setup required.
-
 MySQL (recommended)
 Update settings.py:
-
-python
-Copy
-Edit
+```bash
 DATABASES = {
   'default': {
     'ENGINE': 'django.db.backends.mysql',
@@ -90,31 +83,20 @@ DATABASES = {
   }
 }
 Then run:
-
-bash
-Copy
-Edit
+#after configration
 python manage.py makemigrations
 python manage.py migrate
+```
 4. Create Superuser (Admin)
-bash
-Copy
-Edit
+```bash
 python manage.py createsuperuser
+```
 5. Run Server
-bash
-Copy
-Edit
+```bash
 python manage.py runserver
 App will be available at: http://127.0.0.1:8000/
+```
 
-🧪 Testing
-Run unit tests:
-
-bash
-Copy
-Edit
-python manage.py test
 🌍 Deployment
 Set DEBUG=False in production.
 
@@ -122,7 +104,7 @@ Configure ALLOWED_HOSTS.
 
 Use collectstatic for static files.
 
-Deploy on AWS / Heroku / any cloud provider.
+Deployed on Render and database hosted on Railway.
 
 📂 Data Models
 TravelOption
@@ -153,25 +135,5 @@ booking_date
 
 status (Confirmed / Cancelled)
 
-📸 Screenshots (Optional)
-Login & Registration Page
-
-Travel Options List
-
-Booking Form
-
-My Bookings
-
 👨‍💻 Contributors
-Your Name
-
-📜 License
-MIT License © 2025 Your Name
-
-yaml
-Copy
-Edit
-
----
-
-Would you like me to also add **badges** (Python version, Django version, license, etc.) at the top of the 
+Akshit Sahore
