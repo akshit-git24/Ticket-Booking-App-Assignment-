@@ -8,7 +8,7 @@
     <link href="/static/css/style.css" rel="stylesheet">
     <style>
         body { font-family: Arial, sans-serif; background: #f8f9fa; }
-        .header { background: #003087; padding: 10px 0; }
+        .header { background: #cd04c2ff; padding: 10px 0; }
         .navbar-brand { color: white !important; font-size: 1.5em; }
         .nav-link { color: white !important; margin-left: 10px; }
         .dropdown-menu { background: white; border: 1px solid #ddd; }
@@ -36,9 +36,9 @@
                     <li class="nav-item"><a class="nav-link" href="{% url 'login' %}">🔑 Sign In</a></li>
                     {% else %}
                     <li class="nav-item"><a class="nav-link" href="{% url 'homepage' %}">🏠 Home</a></li>
-                    <li class="nav-item"><a class="nav-link" href="">✈️ Browse Trips</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'travel_options' %}">✈️ Browse Trips</a></li>
                     <li class="nav-item"><a class="nav-link" href="">📊 Dashboard</a></li>
-                    <li class="nav-item"><a class="nav-link" href="">🎫 My Bookings</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{% url 'my_bookings' %}">🎫 My Bookings</a></li>
                     <li><a class="dropdown-item" href="{% url 'logout' %}">👋 Sign Out</a></li>
                         </ul>
                     </li>

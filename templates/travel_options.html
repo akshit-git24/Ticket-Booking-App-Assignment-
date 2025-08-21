@@ -18,6 +18,7 @@
     <!-- Filters -->
     <div class="filter-card p-4 mb-4">
         <h5>Filter Options</h5>
+
         <form method="GET" class="row g-3">
             <div class="col-md-3">
                 <label class="form-label">Travel Type</label>
@@ -53,6 +54,7 @@
                     <small class="text-muted">Showing all available travel options ({{ total_options }} total)</small>
                 </div>
             {% endif %}
+            <h7><Strong>Note:</Strong>None of the field should'nt remain empty.Fill all the fields to get the availability of the tickets
             </div>
         </form>
     </div>
@@ -106,7 +108,6 @@
             {% else %}
                 <p class="text-muted">No travel options are currently available.</p>
             {% endif %}
-            <a href="{% url 'travel_options' %}" class="btn btn-primary">View All Options</a>
         </div>
     {% endif %}
 </div>

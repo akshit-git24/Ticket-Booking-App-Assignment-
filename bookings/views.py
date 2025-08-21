@@ -1,9 +1,11 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.contrib.auth import login, logout
 from django.contrib import messages
-from .models import TravelOption
+from .models import TravelOption,Booking
 from datetime import datetime, date
+from django.contrib.auth import login, logout
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 def homepage(request):
     return render(request, 'homepage.html')
@@ -74,4 +76,66 @@ def travel_options(request):
     
     return render(request, 'travel_options.html', context) 
 
+@login_required
+def book_travel(request, travel_id):
+    travel_option = get_object_or_404(TravelOption, travel_id=travel_id, status='available')
+    if request.method == 'POST':
+        requested_seats = int(request.POST.get('seats', 1))
+        if requested_seats > travel_option.available_seats:
+            messages.error(request, f'❌ Sorry! Only {travel_option.available_seats} seats are available for this trip.')
+            return redirect('book_travel', travel_id=travel_id)
+        
+        new_booking = Booking.objects.create(user=request.user,travel_option=travel_option,number_of_seats=requested_seats,total_price=travel_option.price * requested_seats)
+        travel_option.available_seats -= requested_seats
 
+        if travel_option.available_seats == 0:
+            travel_option.status = 'full' 
+
+        travel_option.save()
+        messages.success(request, f'🎉 Booking confirmed! Your booking ID is #{new_booking.booking_id}. Have a great trip!')
+        return redirect('homepage')
+    
+    context = {'travel_option': travel_option,'max_seats': min(travel_option.available_seats, 10)}
+
+    return render(request, 'book_travel.html', context)
+
+@login_required
+def my_bookings(request):
+    user_bookings = Booking.objects.filter(user=request.user).order_by('-booking_date')
+    return render(request, 'my_bookings.html', {'bookings': user_bookings})
+
+@login_required
+def cancel_booking(request, booking_id):
+    booking = get_object_or_404(Booking, booking_id=booking_id, user=request.user)
+    if booking.status == 'cancelled':
+        messages.warning(request, 'Booking is already cancelled!')
+        return redirect('my_bookings')
+    
+    if request.method == 'POST':
+        booking.status = 'cancelled'
+        booking.save()
+        travel_option = booking.travel_option
+        travel_option.available_seats += booking.number_of_seats
+        if travel_option.status == 'full':
+            travel_option.status = 'available'
+        travel_option.save()
+        
+        messages.success(request, 'Your Booking cancelled successfully!')
+        return redirect('my_bookings')
+    
+    return render(request, 'cancel_booking.html', {'booking': booking})
+
+@login_required
+def delete_booking(request, booking_id):
+    booking = get_object_or_404(Booking, booking_id=booking_id, user=request.user)
+    
+    if booking.status != 'cancelled':
+        messages.error(request, 'Only cancelled bookings can be deleted!')
+        return redirect('my_bookings')
+    
+    if request.method == 'POST':
+        booking.delete()
+        messages.success(request, 'Booking deleted successfully!')
+        return redirect('my_bookings')
+    
+    return render(request, 'delete_booking.html', {'booking': booking})
