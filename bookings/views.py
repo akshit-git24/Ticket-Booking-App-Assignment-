@@ -201,21 +201,21 @@ def booking_history(request):
     context = {'bookings': bookings,'status_filter': status_filter,'travel_type': travel_type,'date_filter': date_filter,'today': date.today()}
     return render(request, 'booking_history.html', context)
 
-@login_required
-def create_profile(request):
-    if hasattr(request.user, 'profile'):
-        return redirect('dashboard')
+# @login_required
+# def create_profile(request):
+#     if hasattr(request.user, 'profile'):
+#         return redirect('dashboard')
     
-    if request.method == 'POST':
-        form = UserProfileUpdateForm(request.POST, request.FILES)
-        if form.is_valid():
-            profile = form.save(commit=False)
-            profile.user = request.user
-            profile.save()
-            messages.success(request, 'Profile created successfully!')
-            return redirect('Homepage')
-    else:
-        form = UserProfileUpdateForm()
-    return render(request, 'create_profile.html', {'form': form})
+#     if request.method == 'POST':
+#         form = UserProfileUpdateForm(request.POST, request.FILES)
+#         if form.is_valid():
+#             profile = form.save(commit=False)
+#             profile.user = request.user
+#             profile.save()
+#             messages.success(request, 'Profile created successfully!')
+#             return redirect('Homepage')
+#     else:
+#         form = UserProfileUpdateForm()
+#     return render(request, 'create_profile.html', {'form': form})
 
 
